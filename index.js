@@ -25,7 +25,7 @@ const injectedScript = function() {
       } else {
         height = document.body.clientHeight;
       }
-      if (height == 0) postMessage(document.body.scrollHeight);
+      if (height == 0) postMessage(document.documentElement.scrollHeight);
       else postMessage(height);
     }
   }
