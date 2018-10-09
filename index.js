@@ -11,29 +11,22 @@
  * @version v1.0.2
  */
 
-import React, { Component } from 'react';
-import {
-  View,
-  Dimensions,
-  WebView,
-} from 'react-native';
+import React, { Component } from "react";
+import { Dimensions, WebView } from "react-native";
 
 const injectedScript = function() {
   function waitForBridge() {
-    if (window.postMessage.length !== 1){
+    if (window.postMessage.length !== 1) {
       setTimeout(waitForBridge, 200);
-    }
-    else {
+    } else {
       let height = 0;
-      if(document.documentElement.clientHeight>document.body.clientHeight)
-      {
-        height = document.documentElement.clientHeight
+      if (document.documentElement.clientHeight > document.body.clientHeight) {
+        height = document.documentElement.clientHeight;
+      } else {
+        height = document.body.clientHeight;
       }
-      else
-      {
-        height = document.body.clientHeight
-      }
-      postMessage(height)
+      if (height == 0) postMessage(document.body.scrollHeight);
+      else postMessage(height);
     }
   }
   waitForBridge();
@@ -45,14 +38,14 @@ export default class MyWebView extends Component {
   };
 
   static defaultProps = {
-      autoHeight: true,
-  }
+    autoHeight: true
+  };
 
-  constructor (props: Object) {
+  constructor(props) {
     super(props);
     this.state = {
       webViewHeight: this.props.defaultHeight
-    }
+    };
 
     this._onMessage = this._onMessage.bind(this);
   }
@@ -67,21 +60,29 @@ export default class MyWebView extends Component {
     this.webview.stopLoading();
   }
 
-  render () {
-    const _w = this.props.width || Dimensions.get('window').width;
-    const _h = this.props.autoHeight ? this.state.webViewHeight : this.props.defaultHeight;
+  render() {
+    const _w = this.props.width || Dimensions.get("window").width;
+    const _h = this.props.autoHeight
+      ? this.state.webViewHeight
+      : this.props.defaultHeight;
     return (
       <WebView
-        ref={(ref) => { this.webview = ref; }}
-        injectedJavaScript={'(' + String(injectedScript) + ')();' +
-          'window.postMessage = String(Object.hasOwnProperty).replace(\'hasOwnProperty\', \'postMessage\');'}
+        ref={ref => {
+          this.webview = ref;
+        }}
+        injectedJavaScript={
+          "(" +
+          String(injectedScript) +
+          ")();" +
+          "window.postMessage = String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage');"
+        }
         scrollEnabled={this.props.scrollEnabled || false}
         onMessage={this._onMessage}
         javaScriptEnabled={true}
         automaticallyAdjustContentInsets={true}
         {...this.props}
-        style={[{width: _w}, this.props.style, {height: _h}]}
+        style={[{ width: _w }, this.props.style, { height: _h }]}
       />
-    )
+    );
   }
 }
