@@ -25,10 +25,14 @@ const injectedScript = function() {
       } else {
         height = document.body.clientHeight;
       }
-      if (height == 0) postMessage(document.documentElement.scrollHeight);
-      else postMessage(height);
+      if (height == 0) {
+        postMessage(document.documentElement.scrollHeight);
+      } else {
+        postMessage(height);
+      }
     }
   }
+  setTimeout(waitForBridge, 200);
   waitForBridge();
 };
 
