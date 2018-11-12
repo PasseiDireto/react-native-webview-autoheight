@@ -60,7 +60,7 @@ export default class MyWebView extends Component {
         webViewHeight: parseInt(message.height)
       });
     }
-    this.props.onMessageCallback(message);
+    if (this.props.onMessageCallback) this.props.onMessageCallback(message);
   }
 
   stopLoading() {
