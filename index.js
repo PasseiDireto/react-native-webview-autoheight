@@ -17,7 +17,7 @@ import { Dimensions, WebView } from "react-native";
 const injectedScript = function() {
   function waitForBridge() {
     if (window.postMessage.length !== 1) {
-      setTimeout(waitForBridge, 200);
+      setTimeout(waitForBridge, 1000);
     } else {
       let height = 0;
       if (document.documentElement.clientHeight > document.body.clientHeight) {
@@ -31,6 +31,7 @@ const injectedScript = function() {
       window.postMessage(JSON.stringify({ height: height }));
     }
   }
+  setTimeout(waitForBridge, 1000);
   waitForBridge();
 };
 
