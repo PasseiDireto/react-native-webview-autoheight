@@ -26,13 +26,11 @@ const injectedScript = function() {
         height = document.body.clientHeight;
       }
       if (height == 0) {
-        postMessage(document.documentElement.scrollHeight);
-      } else {
-        postMessage(height);
+        height = document.documentElement.scrollHeight;
       }
+      window.postMessage(JSON.stringify({ height: height }));
     }
   }
-  setTimeout(waitForBridge, 200);
   waitForBridge();
 };
 
@@ -55,9 +53,13 @@ export default class MyWebView extends Component {
   }
 
   _onMessage(e) {
-    this.setState({
-      webViewHeight: parseInt(e.nativeEvent.data)
-    });
+    const message = JSON.parse(e.nativeEvent.data);
+    if (message.height) {
+      this.setState({
+        webViewHeight: parseInt(message.height)
+      });
+    }
+    this.props.onMessageCallback(message);
   }
 
   stopLoading() {
@@ -74,12 +76,7 @@ export default class MyWebView extends Component {
         ref={ref => {
           this.webview = ref;
         }}
-        injectedJavaScript={
-          "(" +
-          String(injectedScript) +
-          ")();" +
-          "window.postMessage = String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage');"
-        }
+        injectedJavaScript={"(" + String(injectedScript) + ")();"}
         scrollEnabled={this.props.scrollEnabled || false}
         onMessage={this._onMessage}
         javaScriptEnabled={true}
