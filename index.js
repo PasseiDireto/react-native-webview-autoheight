@@ -19,15 +19,11 @@ const injectedScript = function() {
     if (window.postMessage.length !== 1) {
       setTimeout(waitForBridge, 1000);
     } else {
-      let height = 0;
-      if (document.documentElement.clientHeight > document.body.clientHeight) {
-        height = document.documentElement.clientHeight;
-      } else {
-        height = document.body.clientHeight;
-      }
-      if (height == 0) {
-        height = document.documentElement.scrollHeight;
-      }
+      const height = Math.max(
+        document.documentElement.clientHeight,
+        document.body.clientHeight,
+        document.documentElement.scrollHeight
+      );
       window.postMessage(JSON.stringify({ height: height }));
     }
   }
